@@ -1,4 +1,4 @@
-/* 
+/*
     This file is part of pRNG library.
     Please check the README file and the notes inside the pRNG.h file
 */
@@ -48,20 +48,25 @@ uint8_t pRNG::getRndByte() {
         _prngPool[_tempPointer] = _prngPool[_tempPointer + 1];
     }
     //clear the last cell - we don't want to insert recursion into the pool
-    _prngPool[_prngPointer] = 0; 
+    _prngPool[_prngPointer] = 0;
     _prngPointer--;
     SREG |= (1<<SREG_I); //reactivate the interrupts
     return _result;
 }
 
 
-//return an unsinged
+//return an unsinged int
 unsigned int pRNG::getRndInt() {
     return ((getRndByte()<<8) | getRndByte());
 }
 
 
-/* 
+//return an unsinged long
+unsigned long pRNG::getRndLong() {
+    return ((getRndByte()<<24) | getRndByte()<<16 | getRndByte()<<8 | getRndByte());
+}
+
+/*
 ************************************************************
 WARNING!! DO NOT MODIFY THE FOLLOWING CODE IF YOU DON'T KNOW
 WHAT YOU'RE DOING! YOU COULD PUT YOUR MICROCONTROLLER IN A
@@ -72,13 +77,13 @@ NEVERENDING RESET!!
 //set the WatchDog Timer
 void pRNG::_setWDT() {
     MCUSR = 0; //ensure that the reset vectors are off
-    wdt_disable(); //disable WD 
-    SREG &= ~(1<<SREG_I); //disable all the interrupts    
-    
+    wdt_disable(); //disable WD
+    SREG &= ~(1<<SREG_I); //disable all the interrupts
+
     //set WDT to raise an interrupt every 16 ms
     _WD_CONTROL_REG = ((1<<_WD_CHANGE_BIT) | (1<<WDE));
     _WD_CONTROL_REG = (1<<WDIE);
-    
+
     SREG |= (1<<SREG_I); //re-enable interrupts
 }
 
