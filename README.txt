@@ -9,7 +9,7 @@ a mechanism based on an interrupt raised by the WatchDog
 Timer of the microcontroller to collect entropy and a
 Galois 32 bit LFSR (Linear Feedback Shift Register) to
 distribuite it into a 10-bytes pool.
-
+    
 For more infos, please read the README.txt file.
 
 The latest version of this library can be found at:
@@ -22,7 +22,8 @@ Written by Leonardo Miliani <www.leonardomiliani.com>
 ***********************
 VERSION HISTORY
 
-v. 1.1.0:  added the method getRndLong() to extract a random unsigned long int
+v. 1.2.0:  now the pool size is related to the SRAM size
+v. 1.1.0:  added the method getRndLong() to extract a random unsigned long
 v. 1.0.0:  first release
 
 
@@ -37,10 +38,12 @@ by adding the following code at the top of your sketch:
 #include "pRNG.h"
 pRNG prng;
 
-Then you have to initialize the library in the setup() routine:
+++IMPORTANT++
+Since v. 1.2.0, the library doesn't need to be initialized anymore. If
+you're using an older version, initialize the library in the setup() routine:
 
 void setup() {
-  prng.begin();
+  prng.begin(); //only needed for versions < 1.2.0
   .....
 }
 
@@ -50,9 +53,9 @@ byte value = prng.getRndByte();
 unsigned int = prng.getRndInt();
 unsigned long = prng.getRndLong();
 
-getRndByte() will return a random byte (in the range 0..255) while getRndInt()
-will return a random unsigned int (in the range 0..65535), and getRndLong()
-will return a random insigned long integer (0..4294967295).
+getRndByte() will return a random byte (8 bits) in the range 0..255;
+getRndInt() will return a random unsigned int (16 bits) in the range 0..65535;
+getRndLong() will return a random unsigned long (32 bits) in the range 0..4294967295;
 
 
 ***********************
@@ -62,7 +65,7 @@ The mechanism of the library is very simple. It uses an interrupt raised
 by the WatchDog Timer to read the lower byte of the register that keeps the
 current value of the counter of Timer 1 (in case the microcontrollers doesn't
 have Timer 1, Timer 0 will be used instead). Then, the less significant bit is
-taken and XORed with the less significant bit of a Galois 32-bits LFSR, Linear
+taken and XORed with the less significant bit of a Galois 32-bits LFSR, Linear 
 Feedback Shift Register, and at the end the result is stored into a bit of a
 ring pool. The pools is by default 10 bytes in size but it can be resized
 if you nees a bigger one. When the last bit is filled, the algorithm rolls back
@@ -77,13 +80,37 @@ tolerance of the electronics components, the WatchDog Timer will not run perfect
 synchronized with the other microcontroller's peripherals that instead get their
 signal clocks by a common clock source (on Arduino, that is the external ceramic
 resonator). The little differences of the electronic components lead to little
-timing differences. These differences are used to get random sequences that are
+timing differences. These differences are used to get random sequences that are 
 different every time the microcontroller starts running.
 
 The Galois 32-bits LFSR helps to diffuse these differences and get a sequence with
 a pseudo-randomness. The bitwise XOR increases the randomness of the bits that
 will populate the random pool.
 
+Let's see the start of the library.
+Initially, the pool contains only '0' bits:
+00000000 00000000 .... 00000000
+
+The size of the pool is related to the amount of SRAM of the microcontroller:
+- for MCUs with less than 512 bytes of SRAM, the pool size will be set to 8 byte;
+- for MCUs with an amount of SRAM between 512 and 1024 bytes, the pool size will
+be set to 12 bytes;
+- for MCUs with more than 1024 bytes of SRAM, the pool size will be set to 16 bytes.
+
+Now the entropy collector will start running: every time the WDT will overflow, it
+will collect a single bit of entropy and will put it into the pool starting from
+the less significant bit (LSB) to the most significant bit (MSB). Every bit will 
+be added using a specific variable that points to the latest free spot. 
+
+0 --> 00000000 00000000 .... 00000000 --> 00000000 00000000 .... 00000000
+1 --> 00000000 00000000 .... 00000000 --> 10000000 00000000 .... 00000000
+1 --> 10000000 00000000 .... 00000000 --> 11000000 00000000 .... 00000000
+0 --> 11000000 00000000 .... 00000000 --> 11000000 00000000 .... 00000000
+1 --> 11000000 00000000 .... 00000000 --> 11010000 00000000 .... 00000000
+etc...
+
+When the pointer has reached the end of the pool, it is reset and starts again
+from 0, overwriting the bits that are already into the pool.
 
 ***********************
 SUPPORTED MICROCONTROLLERS AND CLOCK FREQUENCIES
@@ -97,11 +124,11 @@ able to generate an interrupt signal but it can only raise a reset signal.
 
 ***********************
 WARNING - IMPORTANT ADVICE FOR ARDUINO MEGA/MEGA2560 OWNERS:
-the original bootloader flashed into the Arduino MEGA and MEGA2560 boards
-doesn’t deactivate the watchdog at the microcontroller’s startup so the
-board will freeze itself in a neverending loop caused by eternal resets.
-To solve this problem, users that want to use leOS2 have to change the
-bootloader with one that it isn’t affected by this issue. The bootloader
+the original bootloader flashed into the Arduino MEGA and MEGA2560 boards 
+doesn’t deactivate the watchdog at the microcontroller’s startup so the 
+board will freeze itself in a neverending loop caused by eternal resets. 
+To solve this problem, users that want to use leOS2 have to change the 
+bootloader with one that it isn’t affected by this issue. The bootloader 
 can be downloaded by this page:
 https://github.com/arduino/Arduino-stk500v2-bootloader/tree/master/goodHexFiles
 
@@ -119,17 +146,17 @@ If you need a more secure algorithm, try looking something else.
 ***********************
 LICENSE
 
-This library is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public	License as published by the Free Software
-Foundation; either version 3.0 of the License, or (at your option) any later
+This library is free software; you can redistribute it and/or modify it under 
+the terms of the GNU General Public	License as published by the Free Software 
+Foundation; either version 3.0 of the License, or (at your option) any later 
 version.
 
 This library is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 
 
 ***********************
 Document revision
 
-2nd revision: 2013/04/28
+3rd revision: 2013/07/04
