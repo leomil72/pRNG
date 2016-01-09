@@ -100,17 +100,22 @@ be set to 12 bytes;
 Now the entropy collector will start running: every time the WDT will overflow, it
 will collect a single bit of entropy and will put it into the pool starting from
 the less significant bit (LSB) to the most significant bit (MSB). Every bit will 
-be added using a specific variable that points to the latest free spot. 
+be added using a specific variable that points to a specific spot. 
 
 0 --> 00000000 00000000 .... 00000000 --> 00000000 00000000 .... 00000000
-1 --> 00000000 00000000 .... 00000000 --> 10000000 00000000 .... 00000000
-1 --> 10000000 00000000 .... 00000000 --> 11000000 00000000 .... 00000000
-0 --> 11000000 00000000 .... 00000000 --> 11000000 00000000 .... 00000000
-1 --> 11000000 00000000 .... 00000000 --> 11010000 00000000 .... 00000000
+      ^                                   ^
+1 --> 00000000 00000000 .... 00000000 --> 01000000 00000000 .... 00000000
+       ^                                   ^
+1 --> 01000000 00000000 .... 00000000 --> 01100000 00000000 .... 00000000
+        ^                                   ^
+0 --> 01100000 00000000 .... 00000000 --> 01100000 00000000 .... 00000000
+         ^                                   ^
+1 --> 01100000 00000000 .... 00000000 --> 01101000 00000000 .... 00000000
+          ^                                   ^
 etc...
 
-When the pointer has reached the end of the pool, it is reset and starts again
-from 0, overwriting the bits that are already into the pool.
+When the pointer has reached the end of the pool, it is reset again
+to 0, overwriting the bits that are already into the pool.
 
 ***********************
 SUPPORTED MICROCONTROLLERS AND CLOCK FREQUENCIES
@@ -159,4 +164,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-3rd revision: 2013/07/04
+4th revision: 2016/01/09
