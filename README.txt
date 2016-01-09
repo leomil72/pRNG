@@ -129,10 +129,12 @@ able to generate an interrupt signal but it can only raise a reset signal.
 
 ***********************
 WARNING - IMPORTANT ADVICE FOR ARDUINO MEGA/MEGA2560 OWNERS:
-the original bootloader flashed into the Arduino MEGA and MEGA2560 boards 
-doesn’t deactivate the watchdog at the microcontroller’s startup so the 
-board will freeze itself in a neverending loop caused by eternal resets. 
-To solve this problem, users that want to use leOS2 have to change the 
+
+the original bootloader flashed into the first models of the Arduino MEGA and
+MEGA2560 boards didn't deactivate the watchdog at the microcontroller’s startup
+leading to a board that will freeze itself in a neverending loop caused by eternal
+resets. 
+To solve this problem, users that want to use pRNG have to change the 
 bootloader with one that it isn’t affected by this issue. The bootloader 
 can be downloaded by this page:
 https://github.com/arduino/Arduino-stk500v2-bootloader/tree/master/goodHexFiles
