@@ -22,6 +22,7 @@ Written by Leonardo Miliani <www.leonardomiliani.com>
 ***********************
 VERSION HISTORY
 
+v. 1.2.1:  added compatibility with Arduino IDE >= 1.6.7
 v. 1.2.0:  now the pool size is related to the SRAM size
 v. 1.1.0:  added the method getRndLong() to extract a random unsigned long
 v. 1.0.0:  first release
@@ -166,4 +167,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-4th revision: 2016/01/09
+5th revision: 2016/02/20
