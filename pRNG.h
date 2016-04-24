@@ -38,7 +38,7 @@
 
 
 //library version
-#define pRNG_VERSION 121
+#define pRNG_VERSION 122
 
 
 //this library is compatible both with Arduino <=0023 and Arduino >=100

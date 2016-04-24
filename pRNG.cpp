@@ -45,7 +45,7 @@ uint8_t pRNG::getRndByte() {
 
 //return an unsinged int (16-bits) from the pool
 uint16_t pRNG::getRndInt() {
-    return ((getRndByte() << 8) | getRndByte());
+    return (((uint16_t)getRndByte() << 8) | getRndByte());
 }
 
 
@@ -83,7 +83,8 @@ ISR(WDT_vect) {
     volatile static unsigned long _lfsr = 1; //LFSR starting values
     _lfsr = (_lfsr >> 1) ^ (-(_lfsr & 1ul) & 0xD0000001ul); //rotate the LFSR
     //XOR between the 1st bit of the LFSR and the 1st bit of the TCNT1L register
-    //the, put the result into a bit of the pool
+    //(or the TCNT0 register, if the MCU has just 1 timer), then put the result
+    //into a bit of the pool
 
 #ifdef TCNT1L
     if ((_lfsr & 1) ^ (TCNT1L & 1)) {

@@ -22,8 +22,9 @@ Written by Leonardo Miliani <www.leonardomiliani.com>
 ***********************
 VERSION HISTORY
 
+v. 1.2.2:  documentation revision; lowered down serial speed to comply with Tiny MCUs
 v. 1.2.1:  added compatibility with Arduino IDE >= 1.6.7
-v. 1.2.0:  now the pool size is related to the SRAM size
+v. 1.2.0:  now the pool size is sized according to the amount of SRAM
 v. 1.1.0:  added the method getRndLong() to extract a random unsigned long
 v. 1.0.0:  first release
 
@@ -64,7 +65,7 @@ HOW IT WORKS
 
 The mechanism of the library is very simple. It uses an interrupt raised
 by the WatchDog Timer to read the lower byte of the register that keeps the
-current value of the counter of Timer 1 (in case the microcontrollers doesn't
+current value of the counter of Timer 1 (in case the microcontroller doesn't
 have Timer 1, Timer 0 will be used instead). Then, the less significant bit is
 taken and XORed with the less significant bit of a Galois 32-bits LFSR, Linear 
 Feedback Shift Register, and at the end the result is stored into a bit of a
@@ -135,9 +136,11 @@ the original bootloader flashed into the first models of the Arduino MEGA and
 MEGA2560 boards didn't deactivate the watchdog at the microcontroller’s startup
 leading to a board that will freeze itself in a neverending loop caused by eternal
 resets. 
-To solve this problem, users that want to use pRNG have to change the 
-bootloader with one that it isn’t affected by this issue. The bootloader 
-can be downloaded by this page:
+To solve this problem, users of such boards that want to use pRNG have to change
+the bootloader with one that it isn’t affected by this issue. The fixed bootloader 
+is bundled with any of the newer releases of the Arduino software at this folder:
+/hardware/arduino/avr/bootloades/stk500v2
+or, in case you are using an older release of the IDE, can be downloaded by this page:
 https://github.com/arduino/Arduino-stk500v2-bootloader/tree/master/goodHexFiles
 
 
@@ -148,7 +151,7 @@ pRNG is NOT intended to be used in critical applications where a REAL
 random number generator is required because the mechanism used by
 this library does NOT guarantee that the sequence won't contain repeating
 patterns.
-If you need a more secure algorithm, try looking something else.
+If you need a more secure algorithm, try looking for something else.
 
 
 ***********************
@@ -167,4 +170,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ***********************
 Document revision
 
-5th revision: 2016/02/20
+6th revision: 2016/04/24

@@ -36,7 +36,7 @@ pRNG prng; //new istance of the class pRNG
 
 //setup
 void setup() {
-    Serial.begin(19200); //let's open the serial
+    Serial.begin(9600); //let's open the serial
     delay(2000);
 }
 
