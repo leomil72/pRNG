@@ -4,16 +4,16 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-pRNG    KEYWORD1
+pRNG	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-begin   KEYWORD2
-getRndByte  KEYWORD2
-getRndInt   KEYWORD2
-getRndLong  KEYWORD2
+begin	KEYWORD2
+getRndByte	KEYWORD2
+getRndInt	KEYWORD2
+getRndLong	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
