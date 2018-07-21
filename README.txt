@@ -22,6 +22,7 @@ Written by Leonardo Miliani <www.leonardomiliani.com>
 ***********************
 VERSION HISTORY
 
+v. 1.2.3:  use correct field separator in keywords.txt (per1234)
 v. 1.2.2:  documentation revision; lowered down serial speed to comply with Tiny MCUs
 v. 1.2.1:  added compatibility with Arduino IDE >= 1.6.7
 v. 1.2.0:  now the pool size is sized according to the amount of SRAM
